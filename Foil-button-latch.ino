@@ -22,8 +22,14 @@ const int key1 = 2;     // the number of the pushbutton 2 pin
 const int key2 = 3;     // the number of the pushbutton 3 pin
 const int key3 = 4;     // the number of the pushbutton 4 pin
 const int key4 = 5;     // the number of the pushbutton 5 pin
-const int ledPin =  13;      // the number of the LED pin
+const int ledPin =  8;      // the number of the LED pin
+const int ledPins[] = {8,9,10,11};
+
+const int seqNum = 4;
 const int keySequence[] = {key1, key2, key3, key4};
+
+const int keyNum = 4;
+const int keyPins[] = {2, 3, 4, 5};
 
 
 
@@ -48,30 +54,19 @@ void setup() {
 }
 
 void loop() {
-  // read the state of the pushbutton value:
-  //  buttonState = digitalRead(button1Pin);
-  //    //loop to latch the light on when input signal is stopped (keyup/falling edge detection) detected as pressed down
-  //    if(buttonState == HIGH)
-  //    {
-  //      //loop until button state changes to low
-  //      do{
-  //        delay(100);
-  //        buttonState = digitalRead(button1Pin);
-  //      }while(buttonState == HIGH);
-  //
-  //      digitalWrite(ledPin, HIGH);
-  //    }
 
   switch (currentState) {
     case 0:
 
-      //gets input
+      //gets input that is detected 
       input = getInput();
 
       //checks if input matches sequence
       if (keySequence[posSequence] == input) {
-        buttonState = digitalRead(input);
 
+        //checks state 
+        buttonState = digitalRead(input);
+        
         if (buttonState == HIGH)
         {
           //loop until button state changes to low
@@ -83,7 +78,7 @@ void loop() {
           digitalWrite(ledPin, HIGH);
           //currentState = 1;
           posSequence++;
-          if (posSequence = 4)
+          if (posSequence == seqNum)
             currentState = 2;
         }
       } else {
@@ -91,23 +86,20 @@ void loop() {
         posSequence = 0;
       }
       break;
-      
+
     case 1: // waitInput
       do {
         input = getInput();
         //wait until next input received.
         //maybe have related timeout
-      } while (input == 0)
-        currentState = 0;
+      } while (input == 0);
+      currentState = 0;
       break;
-      
-    case 2: //output 
+
+    case 2: //output
       digitalWrite(ledPin, HIGH);
       break;
       
-    case 3: // loopInput
-      //do something
-      break;
     default:
       break;
   }
@@ -115,22 +107,33 @@ void loop() {
 
 int getInput()
 {
-  int in
-  digitalRead(key1);
-  if (in == HIGH)
+  int in;
+  for (int i = 0; i < keyNum; i++) {
+    int in = digitalRead(keyPins[i]);
+    if (in == HIGH)
+      return keyPins[i];
+  }
+
+  /*
+    in = digitalRead(key1);
+    if (in == HIGH)
     return key1;
-  digitalRead(key2);
-  if (in == HIGH)
+
+    in = digitalRead(key2);
+    if (in == HIGH)
     return key2;
-  digitalRead(key3);
-  if (in == HIGH)
+
+    in = digitalRead(key3);
+    if (in == HIGH)
     return key3;
-  digitalRead(key4);
-  if (in == HIGH)
+
+    in = digitalRead(key4);
+    if (in == HIGH)
     return key4;
+  */
+
+  
   return 0;
 }
 
-
-}
 
